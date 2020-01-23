@@ -173,6 +173,17 @@ func TestCryptoAlgorithms(t *testing.T) {
 
 		assert.NoError(t, err)
 	})
+
+	t.Run("STREEBOG", func(t *testing.T) {
+		_, err := common.RunString(rt, `
+		let hash = crypto.Streebog("hello world", "hex");
+		const correct = "1bb6ce69d2e895a78489c87a0712a2f40258d1fae3a4666c23f8f487bef0e22a";
+		if (hash !== correct) {
+			throw new Error("Hash mismatch: " + hash);
+		}`)
+
+		assert.NoError(t, err)
+	})
 }
 
 func TestStreamingApi(t *testing.T) {

@@ -35,8 +35,9 @@ import (
 
 	"golang.org/x/crypto/md4"
 	"golang.org/x/crypto/ripemd160"
-
+	"github.com/martinlindhe/gogost/gost34112012256"
 	"github.com/loadimpact/k6/js/common"
+
 )
 
 type Crypto struct{}
@@ -117,6 +118,12 @@ func (c *Crypto) Ripemd160(ctx context.Context, input []byte, outputEncoding str
 	return hasher.Digest(outputEncoding)
 }
 
+func (c *Crypto) Streebog(ctx context.Context, input []byte, outputEncoding string) interface{} {
+	hasher := c.CreateHash(ctx, "streebog")
+	hasher.Update(input)
+	return hasher.Digest(outputEncoding)
+}
+
 func (*Crypto) CreateHash(ctx context.Context, algorithm string) *Hasher {
 	hasher := Hasher{}
 	hasher.ctx = ctx
@@ -140,6 +147,8 @@ func (*Crypto) CreateHash(ctx context.Context, algorithm string) *Hasher {
 		hasher.hash = sha512.New()
 	case "ripemd160":
 		hasher.hash = ripemd160.New()
+	case "streebog":
+		hasher.hash = gost34112012256.New()
 	}
 
 	return &hasher
